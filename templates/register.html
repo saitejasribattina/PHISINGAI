@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create an Account - PhishGuard AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="standalone-auth">
+    <nav class="navbar standalone-nav">
+        <div class="nav-container">
+            <a href="/" class="logo"><i class="fa-solid fa-shield-halved"></i> PhishGuard AI</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-box">
+            <h2>Create an Account</h2>
+            <p>Sign up to save your phishing analysis history</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="flash-message {{ 'flash-success' if category == 'success' else 'flash-error' }}" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: var(--radius-sm); background: var(--bg-main); border: 1px solid var(--border-color);">
+                    <i class="fa-solid {{ 'fa-check-circle' if category == 'success' else 'fa-circle-exclamation' }}"></i>
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('register') }}" method="POST" class="auth-form">
+                <input type="text" name="name" placeholder="Full Name" class="input-field" required>
+                <input type="email" name="email" placeholder="Email Address" class="input-field" required>
+                <input type="password" name="password" placeholder="Password" class="input-field" required>
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-user-plus"></i> Sign Up
+                </button>
+            </form>
+            <div class="auth-link">
+                Already have an account? <a href="{{ url_for('login') }}">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const body = document.body;
+        const savedTheme = localStorage.getItem('phishguard-theme') || 'dark';
+        if (savedTheme === 'light') body.classList.add('light-mode');
+    </script>
+</body>
+</html>

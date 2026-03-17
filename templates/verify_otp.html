@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP | PhishGuard AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="standalone-landing">
+    <!-- Clean simple navbar -->
+    <nav class="navbar scrolled">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-shield-halved"></i> PhishGuard AI
+            </a>
+        </div>
+    </nav>
+
+    <main class="container" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding-top: 80px;">
+        <div class="scanner-card reveal active" style="max-width: 500px; width: 100%; background: var(--glass-bg); padding: 3rem; border-radius: var(--radius-lg); border: 1px solid var(--glass-border); backdrop-filter: blur(20px); box-shadow: var(--shadow-premium); text-align: center;">
+            <div style="margin-bottom: 2rem;">
+                <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem; box-shadow: 0 0 30px var(--primary-glow);">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                </div>
+                <h2>Verify Your Email</h2>
+                <p style="color: var(--text-secondary); margin-top: 0.5rem;">We've sent a 6-digit verification code to your email address.</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; background: {{ 'var(--danger-light)' if category == 'error' else 'var(--success-light)' }}; color: {{ 'var(--danger)' if category == 'error' else 'var(--success)' }}; font-size: 0.9rem; border: 1px solid {{ 'var(--danger)' if category == 'error' else 'var(--success)' }};">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('verify_otp') }}" method="POST">
+                <div class="input-group" style="margin-bottom: 2rem;">
+                    <input type="text" name="otp" placeholder="Enter 6-digit code" class="input-field" maxlength="6" pattern="\d{6}" required style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5em; padding: 1rem;">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                    Verify Account
+                </button>
+            </form>
+
+            <div style="margin-top: 2rem; font-size: 0.9rem; color: var(--text-muted);">
+                Didn't receive the code? <a href="{{ url_for('register') }}" style="color: var(--primary); font-weight: 600;">Restart Signup</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 PhishGuard AI &mdash; Advanced Cybersecurity Protocol</p>
+        </div>
+    </footer>
+</body>
+</html>

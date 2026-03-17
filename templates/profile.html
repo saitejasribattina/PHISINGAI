@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - PhishGuard AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="standalone-profile">
+    <nav class="navbar" id="main-nav">
+        <div class="nav-container">
+            <a href="/" class="logo"><i class="fa-solid fa-shield-halved"></i> PhishGuard AI</a>
+            <div class="nav-links" id="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('history') }}" class="nav-link">History</a>
+                <a href="{{ url_for('profile') }}" class="nav-link active">Profile</a>
+                <a href="{{ url_for('logout') }}" class="nav-link nav-logout">Logout</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div class="theme-toggle" id="theme-toggle"><i class="fa-solid fa-moon"></i></div>
+                <div class="nav-hamburger" id="nav-hamburger"><i class="fa-solid fa-bars"></i></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 120px; padding-bottom: 80px;">
+        <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+            <div style="width: 100px; height: 100px; background: var(--gradient-hero); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; margin: 0 auto 1.5rem; box-shadow: var(--shadow-premium);">
+                {{ current_user.name[0] | upper if current_user.name else '?' }}
+            </div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem;">{{ current_user.name }}</h1>
+            <p style="color: var(--text-muted);"><i class="fa-solid fa-envelope"></i> {{ current_user.email }}</p>
+        </div>
+
+        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem;">
+            <div class="bento-item">
+                <div class="bento-icon"><i class="fa-solid fa-layer-group"></i></div>
+                <div class="bento-content">
+                    <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">{{ total_count or 0 }}</h2>
+                    <p>Analysis Sessions</p>
+                </div>
+            </div>
+            <div class="bento-item">
+                <div class="bento-icon" style="color: var(--danger);"><i class="fa-solid fa-virus-slash"></i></div>
+                <div class="bento-content">
+                    <h2 style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--danger);">{{ phishing_count or 0 }}</h2>
+                    <p>Threats Flagged</p>
+                </div>
+            </div>
+            <div class="bento-item">
+                <div class="bento-icon" style="color: var(--success);"><i class="fa-solid fa-check-double"></i></div>
+                <div class="bento-content">
+                    <h2 style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--success);">{{ safe_count or 0 }}</h2>
+                    <p>Safe Verifications</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a href="/#scanner" class="btn-primary">New Analysis</a>
+            <a href="{{ url_for('history') }}" class="btn-secondary">View Detailed Logs</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 PhishGuard AI &mdash; Advanced Cybersecurity Protocol</p>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const body = document.body;
+        const themeToggle = document.getElementById('theme-toggle');
+        const savedTheme = localStorage.getItem('phishguard-theme') || 'dark';
+        if (savedTheme === 'light') body.classList.add('light-mode');
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            localStorage.setItem('phishguard-theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+            location.reload();
+        });
+
+        const hamburger = document.getElementById('nav-hamburger');
+        const navLinks = document.getElementById('nav-links');
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navLinks.classList.toggle('mobile-open');
+        });
+    });
+    </script>
+</body>
+</html>

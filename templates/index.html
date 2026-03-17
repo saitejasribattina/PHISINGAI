@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard AI – Standalone Security Intelligence</title>
+    <meta name="description" content="AI-powered phishing detection and cybersecurity analysis platform">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="standalone-landing">
+    <!-- Inline Global Shell (Replacement for base.html) -->
+    <nav class="navbar" id="main-nav">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fa-solid fa-shield-halved"></i> PhishGuard AI
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#scanner" class="nav-link">Scanner</a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="nav-link nav-logout">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+                <a href="{{ url_for('register') }}" class="btn-primary">Sign Up</a>
+                {% endif %}
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div class="theme-toggle" id="theme-toggle"><i class="fa-solid fa-moon"></i></div>
+                <div class="nav-hamburger" id="nav-hamburger"><i class="fa-solid fa-bars"></i></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- MAIN HERO SECTION -->
+    <header class="hero-section" id="home">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content reveal">
+                    <div class="bento-badge" style="position: static; display: inline-block; margin-bottom: 1.5rem;">v2.0 AI Protocol</div>
+                    <h1>Secure Your Digital Identity with <span>AI Intelligence</span></h1>
+                    <p>PhishGuard AI uses advanced socio-linguistic patterns to detect and neutralize phishing threats before they reach your inbox.</p>
+                    <div class="hero-actions" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <a href="#scanner" class="btn-primary" style="padding: 1rem 2rem;">Get Started Free</a>
+                        <a href="{{ url_for('register') }}" class="btn-secondary" style="padding: 1rem 2rem; border-color: var(--primary-bright); color: var(--primary-bright);">Create Account</a>
+                    </div>
+                </div>
+                <div class="hero-illustration reveal">
+                    <div class="glass-card" style="position: relative; padding: 2rem; border-radius: var(--radius-lg); background: var(--glass-bg); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); box-shadow: var(--shadow-premium);">
+                        <div style="position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 0 30px var(--primary-glow);">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                            <i class="fa-solid fa-terminal"></i> SECURITY_REPORT_JSON
+                        </div>
+                        <pre style="font-family: monospace; font-size: 0.8rem; color: var(--accent); white-space: pre-wrap;">
+{
+  "threat_level": "CRITICAL",
+  "detection": "AI_NLP_ENGINE",
+  "pattern": "Credential_Harvesting",
+  "status": "BLOCKED"
+}</pre>
+                        <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem;">
+                            <div style="flex-grow: 1; height: 4px; background: var(--danger); border-radius: 2px;"></div>
+                            <div style="flex-grow: 1; height: 4px; background: var(--bg-secondary); border-radius: 2px;"></div>
+                            <div style="flex-grow: 1; height: 4px; background: var(--bg-secondary); border-radius: 2px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Stats Section -->
+        <div class="bento-grid count-parent reveal-stagger" style="margin-bottom: 4rem;">
+            <div class="bento-item wide reveal" style="background: linear-gradient(90deg, var(--bg-card), transparent);">
+                <div class="bento-content">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <h2 class="count" data-target="98" data-plus="%" style="font-size: 4rem; color: var(--primary);">0%</h2>
+                        <p style="font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.9rem;">Detection Accuracy</p>
+                    </div>
+                    <p style="margin-top: 1rem; color: var(--text-muted);">Trained on over 10 million real-world phishing samples for unmatched classification precision.</p>
+                </div>
+            </div>
+            <div class="bento-item reveal">
+                <div class="bento-icon" style="color: var(--accent);"><i class="fa-solid fa-bolt-lightning"></i></div>
+                <div class="bento-content">
+                    <h3>Ultra Fast</h3>
+                    <p>Analysis in <150ms</p>
+                </div>
+            </div>
+            <div class="bento-item reveal">
+                <div class="bento-icon" style="color: var(--danger);"><i class="fa-solid fa-masks-theater"></i></div>
+                <div class="bento-content">
+                    <h3>Deception Detection</h3>
+                    <p>Unmask social engineering</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scanner Section -->
+        <section id="scanner" class="landing-section">
+            <div class="section-title reveal" style="text-align: center;">
+                <span class="bento-badge" style="position: static; display: inline-block; margin-bottom: 1rem;">Core Protocol</span>
+                <h2>AI Dynamic Analyzer</h2>
+                <p>Paste the content of any suspicious email, text, or URL to begin deep-packet inspection.</p>
+            </div>
+            
+            <div class="scanner-card reveal shimmer-card" style="max-width: 900px; margin: 0 auto; background: var(--glass-bg); padding: 3rem; border-radius: var(--radius-lg); border: 1px solid var(--glass-border); backdrop-filter: blur(20px); box-shadow: var(--shadow-premium); position: relative;">
+                {% if not current_user.is_authenticated %}
+                <div style="position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(8px); z-index:10; border-radius: var(--radius-lg); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding: 2rem;">
+                    <i class="fa-solid fa-lock" style="font-size: 3rem; color: var(--primary); margin-bottom: 1.5rem;"></i>
+                    <h3 style="margin-bottom: 0.5rem;">Authentication Required</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">Please log in to your account to execute deep AI analysis.</p>
+                    <div style="display:flex; gap:1rem;">
+                        <a href="{{ url_for('login') }}" class="btn-primary">Login Now</a>
+                        <a href="{{ url_for('register') }}" class="btn-secondary">Create Account</a>
+                    </div>
+                </div>
+                {% endif %}
+                <form id="analyzeForm">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="input-group" style="position: relative;">
+                            <i class="fa-solid fa-envelope" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                            <input type="email" id="sender_email" placeholder="Sender Email" class="input-field" style="padding-left: 2.8rem;">
+                        </div>
+                        <div class="input-group" style="position: relative;">
+                            <i class="fa-solid fa-tag" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                            <input type="text" placeholder="Subject / Meta" class="input-field" style="padding-left: 2.8rem;">
+                        </div>
+                    </div>
+                    <textarea id="message_content" rows="6" placeholder="Paste message content here..." required class="input-field" style="resize: none; background: rgba(0,0,0,0.2);"></textarea>
+                    <button type="submit" class="btn-primary" id="analyzeBtn" style="width: 100%; margin-top: 2rem; padding: 1.25rem; font-size: 1.1rem; background: linear-gradient(to right, var(--primary-bright), var(--primary));">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Execute Deep Analysis
+                    </button>
+                </form>
+
+                <div id="resultSection" style="display: none; margin-top: 3rem; border-top: 1px solid var(--border-color); padding-top: 2.5rem;">
+                    <!-- Result grid stays similar but style updated -->
+                    <div style="display: grid; grid-template-columns: 200px 1fr; gap: 3rem; align-items: start;">
+                        <div style="text-align: center;">
+                            <div class="risk-meter" style="width: 170px; height: 170px; margin: 0 auto 1.5rem; position: relative;">
+                                <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); width: 100%; height: 100%;">
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6"></circle>
+                                    <circle id="risk-progress" cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" stroke-width="6" stroke-dasharray="283" stroke-dashoffset="283" style="transition: stroke-dashoffset 1.5s cubic-bezier(0.19, 1, 0.22, 1);"></circle>
+                                </svg>
+                                <div id="score-value" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; font-weight: 800;">0%</div>
+                            </div>
+                            <div id="status-badge" style="padding: 0.5rem 1.5rem; border-radius: 99px; background: var(--bg-secondary); letter-spacing: 0.2em; font-size: 0.75rem;"></div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <h4 style="margin:0; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; color: var(--text-secondary);"><i class="fa-solid fa-magnifying-glass"></i> Security Check Results</h4>
+                                <span id="confidence-value" style="color: var(--accent); font-weight: 700; font-size: 0.85rem;">CONFIDENCE: HIGH</span>
+                            </div>
+                            <div id="highlighted-text" style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem; border: 1px solid var(--border-color); line-height: 1.8; font-size: 0.95rem;"></div>
+                            <div id="explanation-toggle" style="cursor:pointer; display: flex; align-items: center; gap: 0.5rem; color: var(--primary); font-weight: 600; font-size: 0.9rem; margin-bottom: 1rem;">
+                                <span><i class="fa-solid fa-circle-info"></i> Why we think so</span> <i class="fa-solid fa-chevron-up"></i>
+                            </div>
+                        </div>
+                            <div id="explanation-content" style="margin-top: 0; border-left: 2px solid var(--primary); padding-left: 1.5rem; background: rgba(var(--primary-rgb), 0.03); padding-top: 1rem; padding-bottom: 0.5rem; border-radius: 0 12px 12px 0;">
+                                <ul id="reasons-list" style="list-style: none; padding: 0;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Intelligence Bento -->
+        <div class="bento-grid reveal-stagger" id="features" style="margin-top: 4rem;">
+            <a href="#scanner" class="bento-item reveal" style="text-decoration: none; color: inherit;">
+                <div class="bento-icon" style="color: var(--accent);"><i class="fa-solid fa-fingerprint"></i></div>
+                <div class="bento-content">
+                    <h3>XAI Logic</h3>
+                    <p>Explainable AI providing forensic reasoning for every classification.</p>
+                </div>
+            </a>
+            
+            <a href="#scanner" class="bento-item reveal large" style="text-decoration: none; color: inherit;">
+                <div class="bento-badge">Real-time Feed</div>
+                <div class="bento-content">
+                    <h3>Global Intelligence</h3>
+                    <p style="margin-bottom: 2rem;">Synthesizing patterns from millions of global security endpoints.</p>
+                    <div class="ticker-overflow">
+                        <div class="ticker-track">
+                            <!-- Entry 1 -->
+                            <div class="ticker-entry">
+                                <span style="color: var(--danger); font-weight: 800; font-size: 0.7rem;">BLOCKED</span>
+                                <span>secure-signin-alert.net</span>
+                            </div>
+                            <!-- Entry 2 -->
+                            <div class="ticker-entry">
+                                <span style="color: var(--danger); font-weight: 800; font-size: 0.7rem;">BLOCKED</span>
+                                <span>verify-wallet-sync.io</span>
+                            </div>
+                            <!-- Entry 3 -->
+                            <div class="ticker-entry">
+                                <span style="color: var(--warning); font-weight: 800; font-size: 0.7rem;">SCANNING</span>
+                                <span>auth-secure-protocol.xyz</span>
+                            </div>
+                            <!-- Entry 4 -->
+                            <div class="ticker-entry">
+                                <span style="color: var(--danger); font-weight: 800; font-size: 0.7rem;">BLOCKED</span>
+                                <span>paypal-recovery-support.com</span>
+                            </div>
+                            <!-- Duplicate for seamless loop -->
+                            <div class="ticker-entry"><span style="color: var(--danger); font-weight: 800; font-size: 0.7rem;">BLOCKED</span><span>secure-signin-alert.net</span></div>
+                            <div class="ticker-entry"><span style="color: var(--danger); font-weight: 800; font-size: 0.7rem;">BLOCKED</span><span>verify-wallet-sync.io</span></div>
+                            <div class="ticker-entry"><span style="color: var(--warning); font-weight: 800; font-size: 0.7rem;">SCANNING</span><span>auth-secure-protocol.xyz</span></div>
+                            <div class="ticker-entry"><span style="color: var(--danger); font-weight: 800; font-size: 0.7rem;">BLOCKED</span><span>paypal-recovery-support.com</span></div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#scanner" class="bento-item reveal" style="text-decoration: none; color: inherit;">
+                <div class="bento-icon" style="color: var(--primary);"><i class="fa-solid fa-earth-americas"></i></div>
+                <div class="bento-content">
+                    <h3>Zero Distribution</h3>
+                    <p>Your data stays local and never enters the public web.</p>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <div class="cursor-glow" id="cursor-glow"></div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 PhishGuard AI &mdash; Advanced Cybersecurity Protocol</p>
+        </div>
+    </footer>
+
+    <!-- SHARED GLOBAL SCRIPTS (Standalone) -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Theme & Sticky Logic
+        const body = document.body;
+        const themeToggle = document.getElementById('theme-toggle');
+        const nav = document.getElementById('main-nav');
+        
+        const savedTheme = localStorage.getItem('phishguard-theme') || 'dark';
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            const isLight = body.classList.contains('light-mode');
+            localStorage.setItem('phishguard-theme', isLight ? 'light' : 'dark');
+            themeToggle.querySelector('i').classList.toggle('fa-moon', !isLight);
+            themeToggle.querySelector('i').classList.toggle('fa-sun', isLight);
+        });
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        // Cursor Glow Follow
+        const cursor = document.getElementById('cursor-glow');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Intersection Observer for Reveal
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if(e.isIntersecting) {
+                    e.target.classList.add('active');
+                    if(e.target.classList.contains('count-parent')) {
+                        e.target.querySelectorAll('.count').forEach(c => animateCount(c));
+                    }
+                }
+            });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => observer.observe(el));
+
+        function animateCount(el) {
+            const target = parseInt(el.dataset.target);
+            const plus = el.dataset.plus || '';
+            let count = 0;
+            const step = () => {
+                count += target / 50;
+                if(count < target) {
+                    el.innerText = Math.floor(count) + plus;
+                    requestAnimationFrame(step);
+                } else el.innerText = target + plus;
+            };
+            step();
+        }
+
+        // Scanner Logic
+        const form = document.getElementById('analyzeForm');
+        const btn = document.getElementById('analyzeBtn');
+        const resSec = document.getElementById('resultSection');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const content = document.getElementById('message_content').value;
+            const sender = document.getElementById('sender_email').value;
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Analyzing...';
+            btn.disabled = true;
+
+            fetch('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, sender_email: sender })
+            })
+            .then(res => res.json())
+            .then(data => {
+                btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Run Deep Analysis';
+                btn.disabled = false;
+                renderResults(data, content);
+            })
+            .catch(() => {
+                btn.disabled = false;
+                showToast('Connection failed', 'danger');
+            });
+        });
+
+        function renderResults(data, original) {
+            resSec.style.display = 'block';
+            const progress = document.getElementById('risk-progress');
+            const badge = document.getElementById('status-badge');
+            
+            // Score
+            document.getElementById('score-value').innerText = data.risk_score + '%';
+            
+            // Confidence Label
+            const conf = data.confidence || 0;
+            let relText = "CONFIDENCE: MEDIUM";
+            if (conf > 85) relText = "CONFIDENCE: VERY HIGH";
+            if (conf < 40) relText = "CONFIDENCE: LOW";
+            document.getElementById('confidence-value').innerText = relText;
+            
+            const circ = 2 * Math.PI * 45;
+            progress.style.strokeDashoffset = circ - (data.risk_score/100 * circ);
+            progress.style.stroke = data.status === 'phishing' ? 'var(--danger)' : 'var(--success)';
+
+            badge.innerText = data.status.toUpperCase();
+            badge.style.color = data.status === 'phishing' ? 'var(--danger)' : 'var(--success)';
+            badge.style.fontWeight = '800';
+
+            // Trust Badge
+            const trustBadgeId = 'trust-badge';
+            let trustBadge = document.getElementById(trustBadgeId);
+            if (data.is_trusted) {
+                if (!trustBadge) {
+                    trustBadge = document.createElement('div');
+                    trustBadge.id = trustBadgeId;
+                    badge.parentNode.appendChild(trustBadge);
+                }
+                const icon = data.trust_type === 'sender' ? 'fa-circle-check' : 'fa-link';
+                const label = data.trust_type === 'sender' ? 'Verified Sender' : 'Official Domain';
+                trustBadge.innerHTML = `<i class="fa-solid ${icon}"></i> ${label}`;
+                trustBadge.style.cssText = 'font-size: 0.7rem; color: #3b82f6; margin-top: 0.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;';
+                trustBadge.style.display = 'block';
+            } else if (trustBadge) {
+                trustBadge.style.display = 'none';
+            }
+
+            // Highlights
+            let resultText = original;
+            if (data.highlights) {
+                (data.highlights.suspicious || []).forEach(w => {
+                    const regex = new RegExp(`(${escapeRegExp(w)})`, 'gi');
+                    resultText = resultText.replace(regex, '<span style="color:var(--danger); font-weight:700; border-bottom:1px solid;">$1</span>');
+                });
+                (data.highlights.trusted || []).forEach(w => {
+                    const regex = new RegExp(`(${escapeRegExp(w)})`, 'gi');
+                    resultText = resultText.replace(regex, '<span style="color:var(--success); font-weight:700; border-bottom:1px solid;">$1</span>');
+                });
+            }
+            document.getElementById('highlighted-text').innerHTML = resultText;
+
+            // Reasons
+            const list = document.getElementById('reasons-list');
+            list.innerHTML = '';
+            (data.reasons || []).forEach((r, index) => {
+                const li = document.createElement('li');
+                li.style.marginBottom = '1.25rem';
+                const label = index === 0 ? "MAIN REASON" : "ANOTHER REASON";
+                li.innerHTML = `
+                    <div style="font-weight:800; color:${r.isWarning ? 'var(--danger)' : 'var(--success)'}; font-size:0.7rem; letter-spacing:0.1em; margin-bottom: 0.25rem;">${label}</div>
+                    <div style="font-weight:700; font-size:1rem; margin-bottom: 0.25rem;">${r.text}</div>
+                    <div style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; white-space: pre-wrap;">${r.explanation}</div>
+                `;
+                list.appendChild(li);
+            });
+
+            setTimeout(() => resSec.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
+        }
+
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        const expToggle = document.getElementById('explanation-toggle');
+        const expContent = document.getElementById('explanation-content');
+        expToggle.addEventListener('click', () => {
+            const isVisible = expContent.style.display !== 'none';
+            expContent.style.display = isVisible ? 'none' : 'block';
+            expToggle.querySelector('i').className = isVisible ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up';
+        });
+    });
+
+    function showToast(msg, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const t = document.createElement('div');
+        t.className = `toast toast-${type}`;
+        t.innerText = msg;
+        container.appendChild(t);
+        setTimeout(() => t.remove(), 3000);
+    }
+    </script>
+</body>
+</html>

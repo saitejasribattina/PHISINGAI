@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - PhishGuard AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="standalone-dashboard">
+    <nav class="navbar" id="main-nav">
+        <div class="nav-container">
+            <a href="/" class="logo"><i class="fa-solid fa-shield-halved"></i> PhishGuard AI</a>
+            <div class="nav-links" id="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-link active">Dashboard</a>
+                <a href="{{ url_for('history') }}" class="nav-link">History</a>
+                <a href="{{ url_for('profile') }}" class="nav-link">Profile</a>
+                <a href="{{ url_for('logout') }}" class="nav-link nav-logout">Logout</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div class="theme-toggle" id="theme-toggle"><i class="fa-solid fa-moon"></i></div>
+                <div class="nav-hamburger" id="nav-hamburger"><i class="fa-solid fa-bars"></i></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="padding-top: 120px; padding-bottom: 80px;">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1 style="font-size: 2rem;"><i class="fa-solid fa-gauge-high"></i> Security Dashboard</h1>
+                <p style="color: var(--text-muted);">Real-time overview of your phishing analysis activity</p>
+            </div>
+            <a href="/#scanner" class="btn-primary"><i class="fa-solid fa-plus"></i> New Scan</a>
+        </div>
+
+        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem;">
+            <div class="bento-item">
+                <div class="bento-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                <div class="bento-content">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">{{ total_count or 0 }}</h2>
+                    <p>Total Scans Performed</p>
+                </div>
+            </div>
+            <div class="bento-item">
+                <div class="bento-icon" style="color: var(--danger);"><i class="fa-solid fa-shield-virus"></i></div>
+                <div class="bento-content">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--danger);">{{ phishing_count or 0 }}</h2>
+                    <p>Phishing Detected</p>
+                </div>
+            </div>
+            <div class="bento-item">
+                <div class="bento-icon" style="color: var(--success);"><i class="fa-solid fa-user-shield"></i></div>
+                <div class="bento-content">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--success);">{{ safe_count or 0 }}</h2>
+                    <p>Safe Messages Verified</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bento-grid" style="grid-template-columns: 1fr 2fr;">
+            <div class="bento-item tall">
+                <div class="bento-badge">Distribution</div>
+                <div style="height: 300px; width: 100%;">
+                    <canvas id="doughnutChart" data-phishing="{{ phishing_count or 0 }}" data-safe="{{ safe_count or 0 }}"></canvas>
+                </div>
+            </div>
+            <div class="bento-item tall">
+                <div class="bento-badge">Weekly Trends</div>
+                <div style="height: 300px; width: 100%;">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 PhishGuard AI &mdash; Advanced Cybersecurity Protocol</p>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const body = document.body;
+        const themeToggle = document.getElementById('theme-toggle');
+        const nav = document.getElementById('main-nav');
+        
+        const savedTheme = localStorage.getItem('phishguard-theme') || 'dark';
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            const isLight = body.classList.contains('light-mode');
+            localStorage.setItem('phishguard-theme', isLight ? 'light' : 'dark');
+            themeToggle.querySelector('i').classList.toggle('fa-moon', !isLight);
+            themeToggle.querySelector('i').classList.toggle('fa-sun', isLight);
+            location.reload(); // Reload to refresh chart colors
+        });
+
+        const isLightMode = body.classList.contains('light-mode');
+        const textColor = isLightMode ? '#475569' : '#94A3B8';
+
+        // Doughnut Chart
+        const doughnutCanvas = document.getElementById('doughnutChart');
+        const ph = parseInt(doughnutCanvas.dataset.phishing) || 0;
+        const sf = parseInt(doughnutCanvas.dataset.safe) || 0;
+        
+        new Chart(doughnutCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['Phishing', 'Safe'],
+                datasets: [{
+                    data: [ph, sf],
+                    backgroundColor: ['#f43f5e', '#10b981'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '80%',
+                plugins: { legend: { position: 'bottom', labels: { color: textColor, font: { family: 'Inter' } } } }
+            }
+        });
+
+        // Line Chart
+        const lineCanvas = document.getElementById('lineChart');
+        new Chart(lineCanvas, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Scans',
+                    data: [2, 5, 3, 8, 4, 1, 6],
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: textColor } },
+                    x: { ticks: { color: textColor } }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Hamburger logic
+        const hamburger = document.getElementById('nav-hamburger');
+        const navLinks = document.getElementById('nav-links');
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navLinks.classList.toggle('mobile-open');
+        });
+    });
+    </script>
+</body>
+</html>
